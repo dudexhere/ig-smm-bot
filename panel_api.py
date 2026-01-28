@@ -1,7 +1,7 @@
-import aiohttp
+import requests
 from config import PANEL_API_URL, PANEL_API_KEY
 
-async def panel_add_order(service: int, link: str, quantity: int) -> int:
+def panel_add_order(service: int, link: str, quantity: int) -> int:
     payload = {
         "key": PANEL_API_KEY,
         "action": "add",
@@ -9,16 +9,18 @@ async def panel_add_order(service: int, link: str, quantity: int) -> int:
         "link": link,
         "quantity": quantity
     }
-    async with aiohttp.ClientSession() as session:
-        async with session.post(PANEL_API_URL, data=payload, timeout=40) as resp:
-            data = await resp.json(content_type=None)
-
+    r = requests.post(PANEL_API_URL, data=payload, timeout=40)
+    data = r.json()
     if "order" in data:
         return int(data["order"])
     raise Exception(f"Panel error: {data}")
 
-async def panel_check_status(order_id: int):
-    payload = {"key": PANEL_API_KEY, "action": "status", "order": order_id}
-    async with aiohttp.ClientSession() as session:
-        async with session.post(PANEL_API_URL, data=payload, timeout=40) as resp:
-            return await resp.json(content_type=None)
+def panel_check_status(order_id: int):
+    payload = {
+        "key": PANEL_API_KEY,
+        "action": "status",
+        "order": order_id
+    }
+    r = requests.post(PANEL_API_URL, data=payload, timeout=40)
+    return r.json()
+
