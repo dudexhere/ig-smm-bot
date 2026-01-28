@@ -231,7 +231,7 @@ async def order_quantity(message: Message, state: FSMContext):
 
     try:
         service_id = SERVICE_IG_LIKES if order_type == "likes" else SERVICE_IG_VIEWS
-        panel_id = await panel_add_order(service_id, data["link"], qty)
+        panel_id = panel_add_order(service_id, data["link"], qty)
     except Exception as e:
         await message.answer(f"❌ Failed to place order.\nError: {e}")
         await state.clear()
@@ -272,7 +272,7 @@ async def check_status(message: Message):
 
     panel_id = int(parts[1])
     try:
-        st = await panel_check_status(panel_id)
+        st = panel_check_status(panel_id)
         await message.answer(f"📦 Status:\n`{st}`", parse_mode="Markdown")
     except Exception as e:
         await message.answer(f"❌ Failed to check status: {e}")
